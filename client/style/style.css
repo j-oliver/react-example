@@ -1,0 +1,53 @@
+html{
+  box-sizing: border-box;
+}
+
+body{
+  font-family: 'Verdana';
+}
+
+input{
+  font-family: 'Verdana';
+}
+
+.header {
+  height: 250px;
+}
+
+div[class^="header--"] {
+  text-align: center;
+  line-height: 125px
+}
+
+.header--title {
+  font-size: 32px;
+}
+
+.header--subtitle {
+  font-size: 26px;
+}
+
+.searchbox {
+  height: 175px;
+  text-align: center;
+}
+
+.searchbox--input {
+  font-size: 1em;
+  padding: 1em;
+  margin: 2em;
+  width: 50%;
+}
+
+.searchbox--button {
+  padding: 1em;
+  font-size: 1em;
+  background-color: #FFA000;
+  border: 2px solid black;
+  outline: none;
+  cursor: pointer;
+}
+
+.searchbox--button:active {
+  font-size: 14px;
+}
