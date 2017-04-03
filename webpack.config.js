@@ -7,6 +7,7 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   inject: 'body'
 });
 module.exports = {
+  devtool: 'source-map',
   entry: './client/index.js',
   output: {
     path: path.resolve('dist'),
@@ -14,7 +15,8 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.(js|jsx)$/, loader: 'babel-loader', exclude: /node_modules/ }
+      { test: /\.(js|jsx)$/, loader: 'babel-loader', exclude: /node_modules/ },
+      { test: /\.css$/, loader: 'style-loader!css-loader', exclude: /node_modules/ }
     ]
   },
 
