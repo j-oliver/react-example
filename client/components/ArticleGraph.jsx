@@ -1,17 +1,27 @@
 import React from 'react';
-import apiRequest from '../module/apirequest.js';
 import Node from '../components/ArticleNode.jsx';
 import Edge from '../components/ArticleEdge.jsx';
+import helper from '../module/helper';
+
+function getBoundaryString(boundaries) {
+  const margin = 200;
+  const leftUpperX = boundaries.minX - margin;
+  const leftUpperY = boundaries.minY - margin;
+  const width = (boundaries.maxX - boundaries.minX) + (margin * 2);
+  const height = (boundaries.maxY - boundaries.minY) + (margin * 2);
+
+  return `${leftUpperX} ${leftUpperY} ${width} ${height}`;
+}
 
 export default class ArticleGraph extends React.Component {
 
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
       nodes: [],
-    }
+    };
 
     this.svgBoundaries = {
       minX: 0,
@@ -19,35 +29,10 @@ export default class ArticleGraph extends React.Component {
       minY: 0,
       maxY: 0,
     };
-
-    apiRequest.performMainQuery(this.props.keyword).then(mainArticle => {
-
-      let relatedArticlesPromises = mainArticle.relatedArticles.map(relatedArticle => {
-        return apiRequest.performMainQuery(relatedArticle.title)
-      });
-
-      Promise.all(relatedArticlesPromises).then(relatedArticles => {
-        mainArticle.relatedArticles = relatedArticles;
-        let nodes = this.generateNodes(mainArticle, 50, 50, 400, 30);
-
-        this.setState({
-          nodes: nodes
-        });
-      });
-    });
   }
 
-  getBoundaryString(boundaries){
-    let margin = 200;
-    let leftUpperX = boundaries.minX - margin;
-    let leftUpperY = boundaries.minY - margin;
-    let width = (boundaries.maxX - boundaries.minX) + margin * 2;
-    let height = (boundaries.maxY - boundaries.minY) + margin * 2;
 
-    return `${leftUpperX} ${leftUpperY} ${width} ${height}`;
-  }
-
-  updateSVGBoundaries(x, y){
+  updateSVGBoundaries(x, y) {
     this.svgBoundaries.minX = this.svgBoundaries.minX > x ? x : this.svgBoundaries.minX;
     this.svgBoundaries.maxX = this.svgBoundaries.maxX < x ? x : this.svgBoundaries.maxX;
     this.svgBoundaries.minY = this.svgBoundaries.minY > y ? y : this.svgBoundaries.minY;
@@ -89,22 +74,26 @@ export default class ArticleGraph extends React.Component {
     return <Node key={id} title={title} x={x} y={y} radius={circleRadius} nodes={nodes} edges={edges} fontSize={fontSize}/>
   }
 
-  render(){
+  render() {
+    const nodes = this.generateNodes(this.props.articles, 50, 50, 400, 30, helper.getRandomHSLColor());
+
     return (
-      <div className='articlegraph'>
-        <svg viewBox={this.getBoundaryString(this.svgBoundaries)} version='1.1' xmlns="http://www.w3.org/2000/svg" width='100%' height='100%'>
-          {this.state.nodes}
+      <div className="articlegraph">
+        <svg
+          viewBox={getBoundaryString(this.svgBoundaries)}
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          height="100%"
+        >
+          {nodes}
         </svg>
       </div>
     );
   }
-
 }
 
 ArticleGraph.propTypes = {
-  nodes: React.PropTypes.array
-}
-
-ArticleGraph.defaultProps = {
-  nodes: [],
-}
+  nodes: React.PropTypes.array,
+  graphReady: React.PropTypes.bool,
+};
