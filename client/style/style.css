@@ -11,35 +11,30 @@ input{
 }
 
 .header {
-  height: 250px;
+  height: 100px;
 }
 
-div[class^="header--"] {
+div[class^="header__"] {
   text-align: center;
   line-height: 125px
 }
 
-.header--title {
+.header__title {
   font-size: 32px;
 }
 
-.header--subtitle {
-  font-size: 26px;
-}
-
 .searchbox {
-  height: 175px;
+  padding: 20px;
   text-align: center;
 }
 
-.searchbox--input {
+.searchbox__input {
   font-size: 1em;
   padding: 1em;
-  margin: 2em;
   width: 50%;
 }
 
-.searchbox--button {
+.searchbox__button {
   padding: 1em;
   font-size: 1em;
   background-color: #FFA000;
@@ -48,6 +43,11 @@ div[class^="header--"] {
   cursor: pointer;
 }
 
-.searchbox--button:active {
+.searchbox__button:active {
   font-size: 14px;
+}
+
+.loadingIndicator {
+  padding: 200px 0;
+  text-align: center;
 }
