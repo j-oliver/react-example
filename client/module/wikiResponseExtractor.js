@@ -1,47 +1,71 @@
-function removeDuplicateAliases(aliases){
-  return aliases.map(alias => {
-    return alias.toLowerCase();
-  }).filter((alias, index, self) => {
-    return self.indexOf(alias) === index;
-  });
+function removeDuplicateAliases(aliases) {
+  return aliases
+    .map(alias => alias.toLowerCase())
+    .filter((alias, index, self) => self.indexOf(alias === index));
+}
+
+function extractDescription(page) {
+  let description = '';
+
+  if (page.terms && page.terms.description) {
+    description = page.terms.description[0];
+  }
+
+  return description;
+}
+
+function extractAliases(page) {
+  let aliases = [];
+  if (page.terms && page.terms.alias) {
+    aliases = aliases.concat(page.terms.alias);
+  }
+  if (page.terms && page.terms.label) {
+    aliases = aliases.concat(page.terms.label);
+  }
+
+  aliases = removeDuplicateAliases(aliases);
+
+  return aliases;
+}
+
+function extractAvgViews(page) {
+  const dates = Object.keys(page.pageviews);
+
+  return dates.reduce((avg, key) => {
+    const dateCount = dates.length;
+    const viewsOnDate = page.pageviews[key];
+
+    return avg + (viewsOnDate / dateCount);
+  }, 0);
+}
+
+function extractLinks(page) {
+  return page.links.map(link => link.title);
 }
 
 module.exports = {
-  extractDescription: page => {
-    let description = '';
+  extractAvailableInfo: (page) => {
+    const availableInfo = { title: page.title };
 
-    if(page.terms && page.terms.description)
-      description = page.terms.description[0];
+    Object.keys(page).forEach((key) => {
+      switch (key) {
+        case 'terms':
+          availableInfo.description = extractDescription(page);
+          availableInfo.aliases = extractAliases(page);
+          break;
 
-    return description;
-  },
+        case 'pageviews':
+          availableInfo.avgViews = extractAvgViews(page);
+          break;
 
-  extractAliases: page => {
-    let aliases = [];
-    if(page.terms && page.terms.alias)
-      aliases = aliases.concat(page.terms.alias);
-    if(page.terms && page.terms.label)
-      aliases = aliases.concat(page.terms.label);
+        case 'links':
+          availableInfo.links = extractLinks(page);
+          break;
 
-    aliases = removeDuplicateAliases(aliases);
-
-    return aliases;
-  },
-
-  extractAvgViews: page => {
-    let dates = Object.keys(page.pageviews);
-
-    return dates.reduce((avg, key) => {
-      let dateCount = dates.length;
-      let viewsOnDate = page.pageviews[key];
-
-      return avg + (viewsOnDate / dateCount);
-    }, 0);
-  },
-
-  extractLinks: page => {
-    return page.links.map(link => {
-      return link.title;
+        default: break;
+      }
     });
-  }
-}
+
+    return availableInfo;
+  },
+};
