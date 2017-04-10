@@ -39,39 +39,60 @@ export default class ArticleGraph extends React.Component {
     this.svgBoundaries.maxY = this.svgBoundaries.maxY < y ? y : this.svgBoundaries.maxY;
   }
 
-  generateNodes(article, x, y, nodeDistance, fontSize){
-    let title = article.title;
-    let circleRadius = nodeDistance / 4;
+  generateNodes(article, x, y, nodeDistance, fontSize, color) {
+    let nodes = [];
+    let edges = [];
+
+    const title = article.title;
+    const circleRadius = nodeDistance / 4;
     // let circleRadius = Math.round(article.avgViews / 100);
-    let id = article.id;
+    const id = article.id;
 
-    if(article.relatedArticles !== undefined){
-      var edges = [];
-      var nodes = article.relatedArticles.map((relatedArticle, index, array) => {
-        let length = array.length;
-        let angle = (2 * Math.PI * index) / length;
+    if (article.relatedArticles !== undefined) {
+      edges = [];
 
-        let relX = x + nodeDistance * Math.cos(angle);
-        let relY = y + nodeDistance * Math.sin(angle);
+      const newColor = helper.getRandomHSLColor();
+
+      nodes = article.relatedArticles.map((relatedArticle, index, array) => {
+        const length = array.length;
+        const angle = (2 * Math.PI * index) / length;
+
+        const relX = x + (nodeDistance * Math.cos(angle));
+        const relY = y + (nodeDistance * Math.sin(angle));
+
+        const edgeStartX = x + (circleRadius * Math.cos(angle));
+        const edgeStartY = y + (circleRadius * Math.sin(angle));
+        const edgeEndX = x + ((nodeDistance - (circleRadius / 2)) * Math.cos(angle));
+        const edgeEndY = y + ((nodeDistance - (circleRadius / 2)) * Math.sin(angle));
 
         this.updateSVGBoundaries(relX, relY);
 
-        let edgeStartX = x + circleRadius * Math.cos(angle);
-        let edgeStartY = y + circleRadius * Math.sin(angle);
-        let edgeEndX = x + (nodeDistance - circleRadius / 2) * Math.cos(angle);
-        let edgeEndY = y + (nodeDistance - circleRadius / 2) * Math.sin(angle);
+        edges.push(<Edge fromX={edgeStartX} fromY={edgeStartY} toX={edgeEndX} toY={edgeEndY} />);
 
-        edges.push(
-          <Edge fromX={edgeStartX} fromY={edgeStartY} toX={edgeEndX} toY={edgeEndY}/>
+        return this.generateNodes(
+          relatedArticle,
+          relX,
+          relY,
+          nodeDistance / 2,
+          fontSize / 2,
+          newColor,
         );
-
-        return this.generateNodes(relatedArticle, relX, relY, nodeDistance / 2, fontSize / 2);
-      }).filter(node => {
-        return node !== undefined;
-      });
+      }).filter(node => node !== undefined);
     }
 
-    return <Node key={id} title={title} x={x} y={y} radius={circleRadius} nodes={nodes} edges={edges} fontSize={fontSize}/>
+    return (
+      <Node
+        key={id}
+        title={title}
+        x={x}
+        y={y}
+        radius={circleRadius}
+        nodes={nodes}
+        edges={edges}
+        fontSize={fontSize}
+        color={color}
+      />
+    );
   }
 
   render() {
