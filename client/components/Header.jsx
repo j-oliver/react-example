@@ -4,8 +4,7 @@ export default class Header extends React.Component {
   render() {
     return (
       <div className='header'>
-        <div className='header--title'>Mimikry</div>
-        <div className='header--subtitle'>Viable, Feasible, Desireable</div>
+        <div className='header__title'>Mimikry</div>
       </div>
     )
   }
