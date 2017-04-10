@@ -1,59 +1,66 @@
 import React from 'react';
 
-export default class ArticleNode extends React.Component {
-  constructor(props){
-    super(props);
-  }
+function getTextWidth(text, fontSize) {
+  const margin = 20;
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  context.font = fontSize + 'px';
+  const metrics = context.measureText(text);
 
-  _triggerCircleHover(evt){
+  return metrics.width + margin;
+}
+
+function getNodeXRadius(title, fontSize, initialRadius) {
+  const textWidth = getTextWidth(title, fontSize);
+
+  return initialRadius > textWidth ? initialRadius : textWidth;
+}
+
+export default class ArticleNode extends React.Component {
+
+
+  _triggerCircleHover(evt) {
     evt.target.setAttribute('r', this.props.radius * 1.5);
   }
 
-  _triggerNoCircleHover(evt){
-    evt.target.setAttribute('r', this.props.radius)
+  _triggerNoCircleHover(evt) {
+    evt.target.setAttribute('r', this.props.radius);
   }
 
-  _getTextWidth(text, fontSize){
-    let margin = 20;
-    let canvas = document.createElement('canvas');
-    let context = canvas.getContext('2d');
-    context.font = fontSize + 'px';
-    var metrics = context.measureText(text);
-    return metrics.width + margin;
-  }
-
-  _getNodeXRadius(title, fontSize, initialRadius){
-    let textWidth = this._getTextWidth(title, fontSize);
-
-    return initialRadius > textWidth ? initialRadius : textWidth;
-  }
 
   render() {
-    let x = this.props.x;
-    let y = this.props.y;
-    let nodeXRadius = this._getNodeXRadius(this.props.title, this.props.fontSize, this.props.radius);
-    let nodeYRadius = this.props.radius;
+    const { x, y, title, fontSize, radius, edges, nodes } = this.props;
+    const nodeXRadius = getNodeXRadius(title, fontSize, radius);
+    const nodeYRadius = radius;
 
     return (
       <g>
-        {this.props.edges ? this.props.edges : null}
+        {edges}
         <g>
-          <text x={x} y={y} textAnchor='middle' fontSize={this.props.fontSize}>
-            {this.props.title}
+          <ellipse
+            cx={x}
+            cy={y}
+            rx={nodeXRadius}
+            ry={nodeYRadius}
+            fill={this.props.color}
+            stroke="#000"
+            onMouseOver={this._triggerCircleHover.bind(this)}
+            onMouseOut={this._triggerNoCircleHover.bind(this)}
+          />
+          <text x={x} y={y} textAnchor="middle" fontSize={fontSize}>
+            {title}
           </text>
-          <ellipse cx={x} cy={y} rx={nodeXRadius} ry={nodeYRadius} fillOpacity='0' stroke='#FFA000'
-                  onMouseOver={this._triggerCircleHover.bind(this)}
-                  onMouseOut={this._triggerNoCircleHover.bind(this)}>
-          </ellipse>
         </g>
-        {this.props.nodes ? this.props.nodes : null}
+        {nodes}
       </g>
     );
   }
 }
 
-ArticleNode.defaultProps = {
-  title: '',
-  size: 0,
-  nodes: []
-}
+ArticleNode.propTypes = {
+  title: React.PropTypes.string.isRequired,
+  x: React.PropTypes.number.isRequired,
+  y: React.PropTypes.number.isRequired,
+  radius: React.PropTypes.number.isRequired,
+  fontSize: React.PropTypes.number.isRequired,
+};
