@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   getRandomHSLColor: () => {
     const hue = Math.round(360 * Math.random());
     const saturation = '100%';
@@ -17,4 +17,3 @@ module.exports = {
     return chunkedArray;
   },
 };
-

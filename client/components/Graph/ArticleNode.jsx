@@ -16,8 +16,16 @@ function getNodeXRadius(title, fontSize, initialRadius) {
   return initialRadius > textWidth ? initialRadius : textWidth;
 }
 
+
 export default class ArticleNode extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.parent = {};
+    this.children = [];
+    this.data = {};
+  }
 
   _triggerCircleHover(evt) {
     evt.target.setAttribute('r', this.props.radius * 1.5);
@@ -29,7 +37,7 @@ export default class ArticleNode extends React.Component {
 
 
   render() {
-    const { x, y, title, fontSize, radius, edges, nodes } = this.props;
+    const { x, y, title, fontSize, radius, edges, nodes, color } = this.props;
     const nodeXRadius = getNodeXRadius(title, fontSize, radius);
     const nodeYRadius = radius;
 
@@ -42,7 +50,7 @@ export default class ArticleNode extends React.Component {
             cy={y}
             rx={nodeXRadius}
             ry={nodeYRadius}
-            fill={this.props.color}
+            fill={color}
             stroke="#000"
             onMouseOver={this._triggerCircleHover.bind(this)}
             onMouseOut={this._triggerNoCircleHover.bind(this)}
@@ -57,10 +65,18 @@ export default class ArticleNode extends React.Component {
   }
 }
 
+ArticleNode.defaultProps = {
+  nodes: [],
+  edges: [],
+};
+
 ArticleNode.propTypes = {
   title: React.PropTypes.string.isRequired,
   x: React.PropTypes.number.isRequired,
   y: React.PropTypes.number.isRequired,
   radius: React.PropTypes.number.isRequired,
   fontSize: React.PropTypes.number.isRequired,
+  color: React.PropTypes.string.isRequired,
+  edges: React.PropTypes.arrayOf(React.PropTypes.object),
+  nodes: React.PropTypes.arrayOf(React.PropTypes.object),
 };

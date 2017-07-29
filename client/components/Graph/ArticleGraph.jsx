@@ -1,7 +1,8 @@
+// @flow
 import React from 'react';
-import Node from '../components/ArticleNode.jsx';
-import Edge from '../components/ArticleEdge.jsx';
-import helper from '../module/helper';
+import Node from './ArticleNode.jsx';
+import Edge from './ArticleEdge.jsx';
+import helper from '../../utils/helper';
 
 function getBoundaryString(boundaries) {
   const margin = 200;
@@ -39,7 +40,7 @@ export default class ArticleGraph extends React.Component {
     this.svgBoundaries.maxY = this.svgBoundaries.maxY < y ? y : this.svgBoundaries.maxY;
   }
 
-  generateNodes(article, x, y, nodeDistance, fontSize, color) {
+  generateNodes(article: any, x: number, y: number, nodeDistance, fontSize, color, parent) {
     let nodes = [];
     let edges = [];
 
@@ -69,6 +70,8 @@ export default class ArticleGraph extends React.Component {
 
         edges.push(<Edge fromX={edgeStartX} fromY={edgeStartY} toX={edgeEndX} toY={edgeEndY} />);
 
+        // edges.push(<Edge fromNode={} toNode={} />);
+
         return this.generateNodes(
           relatedArticle,
           relX,
@@ -76,6 +79,7 @@ export default class ArticleGraph extends React.Component {
           nodeDistance / 2,
           fontSize / 2,
           newColor,
+          article,
         );
       }).filter(node => node !== undefined);
     }
@@ -91,12 +95,13 @@ export default class ArticleGraph extends React.Component {
         edges={edges}
         fontSize={fontSize}
         color={color}
+        parent={parent}
       />
     );
   }
 
   render() {
-    const nodes = this.generateNodes(this.props.articles, 50, 50, 400, 30, helper.getRandomHSLColor());
+    const nodes = this.generateNodes(this.props.pages, 50, 50, 400, 30, helper.getRandomColor());
 
     return (
       <div className="articlegraph">
@@ -115,6 +120,5 @@ export default class ArticleGraph extends React.Component {
 }
 
 ArticleGraph.propTypes = {
-  nodes: React.PropTypes.array,
-  graphReady: React.PropTypes.bool,
+  pages: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };

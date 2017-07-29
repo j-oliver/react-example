@@ -1,8 +1,10 @@
 import React from 'react';
+
 import Searchbox from './Searchbox.jsx';
 import Header from './Header.jsx';
-import ArticleGraph from './ArticleGraph.jsx';
-import apiRequest from '../module/apirequest.js';
+import ArticleGraph from './Graph/ArticleGraph.jsx';
+
+import query from '../api/query';
 
 export default class App extends React.Component {
 
@@ -12,31 +14,20 @@ export default class App extends React.Component {
     this.state = {
       querySubmitted: false,
       keyword: null,
+      pages: null,
     };
+
+    this.defaultDepth = 2;
+    this.handleSearchboxSubmit = this.handleSearchboxSubmit.bind(this);
   }
 
-  getArticles(keyword) {
-    return apiRequest.mainQuery(keyword).then((mainArticle) => {
-      const relatedArticlesPromises = mainArticle.relatedArticles.map(relatedArticle => (
-        apiRequest.mainQuery(relatedArticle.title)
-      ));
-
-      return Promise.all(relatedArticlesPromises).then((relatedArticles) => {
-        mainArticle.relatedArticles = relatedArticles;
-
-        return mainArticle;
-      });
-    });
-  }
-
-  _handleSearchboxSubmit(keyword) {
+  handleSearchboxSubmit(keyword) {
     this.setState({
       querySubmitted: true,
-      articles: null,
     });
-    this.getArticles(keyword).then((articles) => {
+    query(keyword, this.defaultDepth).then((pages) => {
       this.setState({
-        articles,
+        pages,
       });
     });
   }
@@ -46,11 +37,11 @@ export default class App extends React.Component {
     return (
       <div>
         <Header />
-        <Searchbox onSubmit={this._handleSearchboxSubmit.bind(this)}/>
+        <Searchbox onSubmit={this.handleSearchboxSubmit} />
         {
           this.state.querySubmitted
-          ? this.state.articles
-            ? <ArticleGraph articles={this.state.articles} />
+          ? this.state.pages
+            ? <ArticleGraph pages={this.state.pages} />
             : <h1 className="loadingIndicator">Loading Graph ...</h1>
           : null
         }

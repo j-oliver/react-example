@@ -16,6 +16,7 @@ function extractDescription(page) {
 
 function extractAliases(page) {
   let aliases = [];
+
   if (page.terms && page.terms.alias) {
     aliases = aliases.concat(page.terms.alias);
   }
@@ -43,8 +44,8 @@ function extractLinks(page) {
   return page.links.map(link => link.title);
 }
 
-module.exports = {
-  extractAvailableInfo: (page) => {
+export default {
+  filterPage: (page) => {
     const availableInfo = { title: page.title };
 
     Object.keys(page).forEach((key) => {
@@ -68,4 +69,14 @@ module.exports = {
 
     return availableInfo;
   },
+
+  hasHighViewCount: (pageInfo, pageViewMinimum = 100) => (
+    pageInfo.avgViews > pageViewMinimum
+  ),
+
+  isRelatedByLink: (pageInfo, referenceAliases) => (
+    pageInfo.links && pageInfo.links.some(link => (
+      referenceAliases.indexOf(link.toLowerCase()) !== -1
+    ))
+  ),
 };
