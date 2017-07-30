@@ -1,8 +1,11 @@
 // @flow
 import React from 'react';
-import Node from './ArticleNode.jsx';
+import ArticleNode from './ArticleNode.jsx';
 import Edge from './ArticleEdge.jsx';
 import helper from '../../utils/helper';
+
+import Node from '../../utils/dag';
+
 
 function getBoundaryString(boundaries) {
   const margin = 200;
@@ -85,7 +88,7 @@ export default class ArticleGraph extends React.Component {
     }
 
     return (
-      <Node
+      <ArticleNode
         key={id}
         title={title}
         x={x}
@@ -101,7 +104,8 @@ export default class ArticleGraph extends React.Component {
   }
 
   render() {
-    const nodes = this.generateNodes(this.props.pages, 50, 50, 400, 30, helper.getRandomColor());
+    // const nodes = this.generateNodes(this.props.pages, 50, 50, 400, 30, helper.getRandomColor());
+    const tree = new Node(this.props.pages);
 
     return (
       <div className="articlegraph">
