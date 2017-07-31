@@ -59,7 +59,7 @@ export default class Node {
     }
   }
 
-  isRoot(): boolean { return this.parents === null; }
+  isRoot(): boolean { return this.parents.length === 0; }
 
   isLeaf(): boolean { return this.children.length === 0; }
 
@@ -93,11 +93,11 @@ export default class Node {
 
   setParents(parents: Array<Node>) { this.parents = parents; }
 
-  addChildren(children: Array<page>) {
-    if (children === undefined) return;
+  addChildren(nodes: Array<page>) {
+    if (nodes === undefined) return;
 
-    this.children.push(...children.map(child => (
-      new Node(child, this)
+    this.children.push(...nodes.map(node => (
+      new Node(node, this)
     )));
   }
 
@@ -114,56 +114,75 @@ export default class Node {
     node.parents.forEach((parent) => {
       this.addParent(parent);
       parent.addChild(this);
+
+      parent.removeChild(node);
     });
   }
 
   findNodeByTitle(title: string): ?Node {
-    const queue = [this];
-
-    while (queue.length !== 0) {
-      const nextNode = queue.pop();
-
-      if (title === nextNode.title) {
-        return nextNode;
+    let nodeWithTitle = null;
+    this.traverse((node) => {
+      if (nodeWithTitle === null && node.title === title) {
+        nodeWithTitle = node;
       }
+    });
 
-      queue.push(...nextNode.children);
-    }
+    return nodeWithTitle;
+  }
 
-    return null;
+  size() {
+    let size = 0;
+    this.traverse((node) => { size += 1; });
+
+    return size;
+  }
+
+
+  flattenTree() {
+    const flattenedTree = [];
+    this.traverse((node) => { flattenedTree.push(node); });
+
+    return flattenedTree;
   }
 
   nodeExists(title: string): boolean {
     return this.findNodeByTitle(title) !== null;
   }
 
+  traverse(func: (Node) => void) {
+    const allnodes = this.nodes();
+    let nextNode = allnodes.next().value;
 
-  traverse(executable: (Node) => any) {
+    while (nextNode !== undefined) {
+      func(nextNode);
+      nextNode = allnodes.next().value;
+    }
+  }
+
+  * nodes(): any {
     const queue = [this];
+    const visited = [];
 
     while (queue.length !== 0) {
-      executable(queue.pop());
+      const nextNode = queue.pop();
+      if (visited.indexOf(nextNode) === -1) {
+        visited.push(nextNode);
 
-      if (this.children.length > 0) {
-        queue.push(...this.children);
+        yield nextNode;
+
+        queue.push(...nextNode.children);
       }
     }
   }
 
-  flattenTree() {
-    const flattenedTree = [];
-    const queue = [this];
-
-    while (queue.length !== 0) {
-      flattenedTree.push(queue.pop());
-
-      if (this.children.length > 0) {
-        queue.push(...this.children);
-      }
+  getDepth(): number {
+    if (this.isRoot()) {
+      return 0;
     }
 
-    return flattenedTree;
+    return Math.min(...this.parents.map(parent => parent.getDepth() + 1));
   }
+
 
   mergeDuplicateNodes() {
     const flattenedTree = this.flattenTree();
