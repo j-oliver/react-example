@@ -10,10 +10,13 @@ export default class Searchbox extends React.Component {
 
   render() {
     return (
-      <form className="searchbox" onSubmit={this._handleSubmit.bind(this)}>
-        <input className="searchbox__input" type="text" placeholder="I want to learn about ..." name="searchBox" />
-        <input className="searchbox__button" type="submit" value="Go" />
-      </form>
+      <div className="header">
+        <div className="header__title">Mimikry</div>
+        <form className="searchbox" onSubmit={this._handleSubmit.bind(this)}>
+          <input className="searchbox__input" type="text" placeholder="I want to learn about ..." name="searchBox" />
+        </form>
+      </div>
     );
   }
+          // <input className="searchbox__button" type="submit" value="Start" />
 }

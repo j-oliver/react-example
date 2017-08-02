@@ -1,17 +1,18 @@
-html{
+* {
   box-sizing: border-box;
 }
 
-body{
-  font-family: 'Verdana';
+html, body {
+  margin: 0;
 }
 
-input{
-  font-family: 'Verdana';
+body, input{
+  font-family: 'Lato', sans-serif;
 }
 
 .header {
-  height: 100px;
+  background-color: #555;
+  color: white;
 }
 
 div[class^="header__"] {
@@ -20,25 +21,30 @@ div[class^="header__"] {
 }
 
 .header__title {
-  font-size: 32px;
+  font-family: 'Caveat', cursive;
+  font-size: 40px;
 }
 
 .searchbox {
   padding: 20px;
+  padding-bottom: 50px;
   text-align: center;
 }
 
 .searchbox__input {
+  text-align: center;
   font-size: 1em;
   padding: 1em;
   width: 50%;
+  outline: none;
+  border: none;
 }
 
 .searchbox__button {
   padding: 1em;
   font-size: 1em;
-  background-color: #FFA000;
-  border: 2px solid black;
+  background-color: #aaa;
+  border: none;
   outline: none;
   cursor: pointer;
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Searchbox from './Searchbox.jsx';
-import Header from './Header.jsx';
 import ArticleGraph from './Graph/ArticleGraph.jsx';
 
 import query from '../api/query';
@@ -36,7 +35,6 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <Header />
         <Searchbox onSubmit={this.handleSearchboxSubmit} />
         {
           this.state.querySubmitted

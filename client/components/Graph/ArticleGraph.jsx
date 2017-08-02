@@ -71,7 +71,6 @@ export default class ArticleGraph extends React.Component {
 
     const title = pageNode.title;
     // let circleRadius = Math.round(pageNode.avgViews / 100);
-    const id = pageNode.id;
     const circleRadius = nodeDistance / 4;
 
     if (pageNode.children !== undefined) {
@@ -80,7 +79,6 @@ export default class ArticleGraph extends React.Component {
       const newColor = helper.getRandomHSLColor();
 
       nodes = pageNode.children.map((relatedPage, index, array) => {
-        if (relatedPage.visited) return undefined;
 
         const angle = (2 * Math.PI * index) / array.length;
         const relX = x + (nodeDistance * Math.cos(angle));
@@ -91,6 +89,8 @@ export default class ArticleGraph extends React.Component {
         edges.push(getEdge(nodeDistance, angle, x, y, circleRadius));
 
         // edges.push(<ArticleEdge fromNode={} toNode={} />);
+
+        if (relatedPage.visited) return undefined;
 
         return this.generateNodes(
           relatedPage,
@@ -106,7 +106,7 @@ export default class ArticleGraph extends React.Component {
 
     return (
       <ArticleNode
-        key={id}
+        key={title}
         title={title}
         x={x}
         y={y}

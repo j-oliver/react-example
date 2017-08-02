@@ -91,8 +91,6 @@ export default class Node {
     if (index > -1) this.parents.splice(index, 1);
   }
 
-  setParents(parents: Array<Node>) { this.parents = parents; }
-
   addChildren(nodes: Array<page>) {
     if (nodes === undefined) return;
 
